@@ -63,4 +63,38 @@ class ProductRepositoryTest {
         assertEquals(product2.getProductId(), savedProduct2.getProductId());
         assertFalse(productIterator.hasNext());
     }
+
+    @Test
+    void testEditProduct() {
+        Product originalProduct = new Product();
+        originalProduct.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        originalProduct.setProductName("Low Taper Fade");
+        originalProduct.setProductQuantity(100);
+        productRepository.create(originalProduct);
+
+        originalProduct.setProductName("Massive");
+        originalProduct.setProductQuantity(50);
+        productRepository.update(originalProduct);
+
+        Iterator<Product> productIterator = productRepository.findAll();
+        assertTrue(productIterator.hasNext());
+        Product updatedProduct = productIterator.next();
+
+        assertEquals(originalProduct.getProductId(), updatedProduct.getProductId());
+        assertEquals(originalProduct.getProductName(), updatedProduct.getProductName());
+        assertEquals(originalProduct.getProductQuantity(), updatedProduct.getProductQuantity());
+    }
+
+    @Test
+    void testDeleteProduct() {
+        Product productToDelete = new Product();
+        productToDelete.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        productToDelete.setProductName("Egypt Property");
+        productToDelete.setProductQuantity(100);
+        productRepository.create(productToDelete);
+
+        productRepository.delete(productToDelete.getProductId());
+        Iterator<Product> productIterator = productRepository.findAll();
+        assertFalse(productIterator.hasNext());
+    }
 }
