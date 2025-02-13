@@ -16,7 +16,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(SeleniumJupiter.class)
-class CreateProductFunctionalTest {
+class EditProductFunctionalTest {
     @LocalServerPort
     private int serverPort;
 
@@ -30,18 +30,31 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void userCanCreateAndSeeProduct(ChromeDriver driver) {
+    void userCreateAndEditProduct(ChromeDriver driver) {
         driver.get(baseUrl + "/product/create");
 
         WebElement nameInput = driver.findElement(By.name("productName"));
         WebElement quantityInput = driver.findElement(By.name("productQuantity"));
         WebElement submitButton = driver.findElement(By.tagName("button"));
 
-        nameInput.sendKeys("Sigma");
-        quantityInput.sendKeys("10");
+        nameInput.sendKeys("Skibidi");
+        quantityInput.sendKeys("20");
         submitButton.click();
 
         driver.get(baseUrl + "/product/list");
+
+        WebElement editLink = driver.findElement(By.linkText("Edit"));
+        editLink.click();
+
+        nameInput = driver.findElement(By.name("productName"));
+        quantityInput = driver.findElement(By.name("productQuantity"));
+        WebElement updateButton = driver.findElement(By.tagName("button"));
+
+        nameInput.clear();
+        nameInput.sendKeys("Sigma");
+        quantityInput.clear();
+        quantityInput.sendKeys("10");
+        updateButton.click();
 
         WebElement productTable = driver.findElement(By.tagName("table"));
         String pageSource = productTable.getText();
