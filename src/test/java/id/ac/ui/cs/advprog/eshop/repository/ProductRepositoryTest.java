@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -17,6 +18,7 @@ class ProductRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        productRepository = new ProductRepository();
     }
 
     @Test
@@ -27,12 +29,17 @@ class ProductRepositoryTest {
         product.setProductQuantity(100);
         productRepository.create(product);
 
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product savedProduct = productIterator.next();
-        assertEquals(product.getProductId(), savedProduct.getProductId());
-        assertEquals(product.getProductName(), savedProduct.getProductName());
-        assertEquals(product.getProductQuantity(), savedProduct.getProductQuantity());
+        Product foundProduct = productRepository.findById("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        assertNotNull(foundProduct);
+        assertEquals(product.getProductId(), foundProduct.getProductId());
+        assertEquals(product.getProductName(), foundProduct.getProductName());
+        assertEquals(product.getProductQuantity(), foundProduct.getProductQuantity());
+    }
+
+    @Test
+    void testFindByIdNotFound() {
+        Product foundProduct = productRepository.findById("skibidi-id");
+        assertNull(foundProduct);
     }
 
     @Test
@@ -42,7 +49,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void testFindAllIfMoreThanOneProduct () {
+    void testFindAllIfMoreThanOneProduct() {
         Product product1 = new Product();
         product1.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
         product1.setProductName("Low Taper Fade");
@@ -72,17 +79,29 @@ class ProductRepositoryTest {
         originalProduct.setProductQuantity(100);
         productRepository.create(originalProduct);
 
-        originalProduct.setProductName("Massive");
-        originalProduct.setProductQuantity(50);
-        productRepository.update(originalProduct);
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        updatedProduct.setProductName("Massive");
+        updatedProduct.setProductQuantity(50);
+        productRepository.update(updatedProduct);
 
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product updatedProduct = productIterator.next();
+        Product foundProduct = productRepository.findById("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        assertNotNull(foundProduct);
+        assertEquals(updatedProduct.getProductId(), foundProduct.getProductId());
+        assertEquals(updatedProduct.getProductName(), foundProduct.getProductName());
+        assertEquals(updatedProduct.getProductQuantity(), foundProduct.getProductQuantity());
+    }
 
-        assertEquals(originalProduct.getProductId(), updatedProduct.getProductId());
-        assertEquals(originalProduct.getProductName(), updatedProduct.getProductName());
-        assertEquals(originalProduct.getProductQuantity(), updatedProduct.getProductQuantity());
+    @Test
+    void testUpdateNonExistentProduct() {
+        Product nonExistentProduct = new Product();
+        nonExistentProduct.setProductId("skibidi-id");
+        nonExistentProduct.setProductName("Cave Divers");
+        nonExistentProduct.setProductQuantity(1);
+        productRepository.update(nonExistentProduct);
+
+        Product foundProduct = productRepository.findById("skibidi-id");
+        assertNull(foundProduct);
     }
 
     @Test
@@ -94,7 +113,13 @@ class ProductRepositoryTest {
         productRepository.create(productToDelete);
 
         productRepository.delete(productToDelete.getProductId());
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertFalse(productIterator.hasNext());
+        Product foundProduct = productRepository.findById("eb558e9f-1c39-460e-8860-71af6af63bd6");
+        assertNull(foundProduct);
+    }
+
+    @Test
+    void testDeleteNonExistentProduct() {
+        productRepository.delete("skibidi-id");
+        assertFalse(productRepository.findAll().hasNext());
     }
 }
