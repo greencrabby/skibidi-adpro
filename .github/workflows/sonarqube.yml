@@ -26,10 +26,13 @@ jobs:
         uses: sonarsource/sonarcloud-github-action@v2
         with:
           args: >
+            -Dsonar.projectKey=greencrabby_skibidi-adpro
+            -Dsonar.organization=greencrabby
+            -Dsonar.sources=src/main/java
+            -Dsonar.tests=src/test/java
             -Dsonar.java.binaries=build/classes/java/main
-            -Dsonar.java.test.binaries=build/test-classes
-            -Dsonar.junit.reportPaths=build/test-results/test
-            -Dsonar.jacoco.reportPaths=build/jacoco/test.exec
+            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
+
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: 'https://sonarcloud.io/'
