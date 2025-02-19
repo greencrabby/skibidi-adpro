@@ -1,0 +1,34 @@
+name: Sonar Scan
+
+on:
+  push:
+
+jobs:
+  build-and-analyze:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Set up Java toolchain
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          cache: "gradle"
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      - name: Build Project
+        run: ./gradlew build
+      - name: Run Tests
+        run: ./gradlew test
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.java.binaries=build/classes/java/main
+            -Dsonar.java.test.binaries=build/test-classes
+            -Dsonar.junit.reportPaths=build/test-results/test
+            -Dsonar.jacoco.reportPaths=build/jacoco/test.exec
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: 'https://sonarcloud.io/'
