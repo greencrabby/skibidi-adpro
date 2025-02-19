@@ -79,24 +79,35 @@ class ProductRepositoryTest {
         originalProduct.setProductQuantity(100);
         productRepository.create(originalProduct);
 
-        Product updatedProduct = new Product();
-        updatedProduct.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        updatedProduct.setProductName("Massive");
-        updatedProduct.setProductQuantity(50);
-        productRepository.update(updatedProduct);
+        originalProduct.setProductName("Massive");
+        originalProduct.setProductQuantity(50);
+        productRepository.update(originalProduct);
 
-        Product foundProduct = productRepository.findById("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        assertNotNull(foundProduct);
-        assertEquals(updatedProduct.getProductId(), foundProduct.getProductId());
-        assertEquals(updatedProduct.getProductName(), foundProduct.getProductName());
-        assertEquals(updatedProduct.getProductQuantity(), foundProduct.getProductQuantity());
+        Iterator<Product> productIterator = productRepository.findAll();
+        assertTrue(productIterator.hasNext());
+        Product updatedProduct = productIterator.next();
+
+        assertEquals(originalProduct.getProductId(), updatedProduct.getProductId());
+        assertEquals(originalProduct.getProductName(), updatedProduct.getProductName());
+        assertEquals(originalProduct.getProductQuantity(), updatedProduct.getProductQuantity());
+
+        Product nonExistingProduct = new Product();
+        nonExistingProduct.setProductId("skibidi-id");
+        nonExistingProduct.setProductName("Sigma");
+        nonExistingProduct.setProductQuantity(5);
+        productRepository.update(nonExistingProduct);
+
+        Iterator<Product> unchangedIterator = productRepository.findAll();
+        assertTrue(unchangedIterator.hasNext());
+        Product unchangedProduct = unchangedIterator.next();
+        assertNotEquals(nonExistingProduct.getProductId(), unchangedProduct.getProductId());
     }
 
     @Test
     void testUpdateNonExistentProduct() {
         Product nonExistentProduct = new Product();
         nonExistentProduct.setProductId("skibidi-id");
-        nonExistentProduct.setProductName("Cave Divers");
+        nonExistentProduct.setProductName("Sigma");
         nonExistentProduct.setProductQuantity(1);
         productRepository.update(nonExistentProduct);
 
