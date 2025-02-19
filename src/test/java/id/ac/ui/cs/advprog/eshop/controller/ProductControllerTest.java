@@ -36,7 +36,7 @@ public class ProductControllerTest {
     public void testCreateProductPage() throws Exception {
         mockMvc.perform(get("/product/create"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("createProduct"))
+                .andExpect(view().name("CreateProduct"))
                 .andExpect(model().attributeExists("product"));
     }
 
@@ -59,7 +59,7 @@ public class ProductControllerTest {
 
         mockMvc.perform(get("/product/list"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("productList"))
+                .andExpect(view().name("ProductList"))
                 .andExpect(model().attributeExists("products"));
     }
 
@@ -73,7 +73,7 @@ public class ProductControllerTest {
 
         mockMvc.perform(get("/product/edit/eb558e9f-1c39-460e-8860-71af6af63bd"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("editProduct"))
+                .andExpect(view().name("EditProduct"))
                 .andExpect(model().attributeExists("product"));
     }
 
