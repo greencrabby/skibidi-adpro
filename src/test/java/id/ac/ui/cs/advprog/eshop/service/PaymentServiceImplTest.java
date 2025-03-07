@@ -43,21 +43,20 @@ class PaymentServiceImplTest {
 
         Map<String, String> paymentData2 = new HashMap<>();
         paymentData2.put("voucherCode", "ESHOP1234ABC5678");
-        Payment payment2 = new Payment("6789-skibidi12345", PaymentMethod.VOUCHER.getValue(), order, paymentData2);
+        Payment payment2 = new Payment("12345-skibidi6789", PaymentMethod.VOUCHER.getValue(), order, paymentData2);
         payments.add(payment2);
     }
 
     @Test
     void testCreatePayment() {
         Payment payment = payments.get(1);
-        doReturn(payment).when(paymentRepository).save(payment);
+        doReturn(payment).when(paymentRepository).save(any(Payment.class));
 
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "ESHOP1234ABC5678");
         Payment newPayment = paymentService.addPayment(order, PaymentMethod.VOUCHER.getValue(), paymentData);
-        verify(paymentRepository, times(1)).save(payment);
-        Payment result = paymentService.getPayment(newPayment.getId());
-        assertEquals(result.getId(), newPayment.getId());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+        assertEquals(payment.getId(), newPayment.getId());
     }
 
     @Test
@@ -72,5 +71,20 @@ class PaymentServiceImplTest {
         assertEquals(payment.getId(), result.getId());
         assertEquals(PaymentStatus.SUCCESS.getValue(), result.getStatus());
         verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testFindByIdIfIdFound() {
+        Payment payment = payments.get(1);
+        doReturn(payment).when(paymentRepository).findById(payment.getId());
+
+        Payment result = paymentService.getPayment(payment.getId());
+        assertEquals(payment.getId(), result.getId());
+    }
+
+    @Test
+    void testFindByIdIfIdNotFound() {
+        doReturn(null).when(paymentRepository).findById("zczc");
+        assertNull(paymentService.getPayment("zczc"));
     }
 }
