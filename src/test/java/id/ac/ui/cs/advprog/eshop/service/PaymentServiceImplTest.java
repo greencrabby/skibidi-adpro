@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceImplTest {
     @InjectMocks
-    PaymentServiceImplTest paymentService;
+    PaymentServiceImpl paymentService;
     @Mock
     PaymentRepository paymentRepository;
 
